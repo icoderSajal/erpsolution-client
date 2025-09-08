@@ -14,6 +14,7 @@ export default function UpdateEmployeeOnBarding() {
   const [roles, setRoles] = useState([]);
   const [employeeId, setEmployeeId] = useState("");
   const { id } = useParams();
+  const [companies, setCompanies] = useState([]);
 
   const navigate = useNavigate();
 
@@ -43,7 +44,7 @@ export default function UpdateEmployeeOnBarding() {
             mobileNumber: employee.mobileNumber,
             designation: employee.designation,
             department: employee.department,
-            role: employee?.userId?.role,
+            role: employee?.role,
             maritalStatus: employee.maritalStatus,
             salary: employee.salary,
             pin: employee.pin,
@@ -51,7 +52,10 @@ export default function UpdateEmployeeOnBarding() {
             state: employee.state,
             country: employee.country,
             address: employee.address,
+            companyId: employee.companyId,
           }));
+
+          alert(employee.role);
         } else {
           toast.error("Failed to fetch employee data.");
         }
@@ -222,7 +226,7 @@ export default function UpdateEmployeeOnBarding() {
     if (!formData.maritalStatus)
       errors.maritalStatus = "Marital status is required";
     if (!formData.salary) errors.salary = "Salary is required";
-    // if (!formData.image) errors.image = "Profile image is required";
+    if (!formData.companyId) errors.companyId = "company is required";
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -263,10 +267,28 @@ export default function UpdateEmployeeOnBarding() {
     }
   };
 
+  const fetchCompanies = async () => {
+    try {
+      const res = await api.get("/admin/getcompanies", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      if (res.data.success) {
+        setCompanies(res.data.companies);
+      }
+    } catch (error) {
+      toast.error(`Error to fetch company data`);
+    }
+  };
+  useEffect(() => {
+    fetchCompanies();
+  }, []);
+
   return (
     <div className="max-w-6xl mx-auto bg-gray-600 backdrop-blur p-8 rounded-md shadow-xl text-white">
       <h2 className="text-4xl font-bold text-center text-teal-50 mb-8">
-        Employee Onboarding
+        Update Employee
       </h2>
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -419,7 +441,7 @@ export default function UpdateEmployeeOnBarding() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-50">
-              Designation <span className="text-red-500">*</span>
+              Designation *
             </label>
             <input
               placeholder="Designation"
@@ -435,7 +457,7 @@ export default function UpdateEmployeeOnBarding() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-50">
-              Department <span className="text-red-500">*</span>
+              Department *
             </label>
 
             <select
@@ -459,11 +481,10 @@ export default function UpdateEmployeeOnBarding() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-50">
-              Role <span className="text-red-500">*</span>
+              Role *
             </label>
             <select
               name="role"
-              value={formData.role}
               onChange={handleChange}
               className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
             >
@@ -476,117 +497,14 @@ export default function UpdateEmployeeOnBarding() {
                 </option>
               ))}
             </select>
-            {formErrors.roles && (
-              <p className="text-red-400 text-sm">{formErrors.roles}</p>
+            {formErrors.role && (
+              <p className="text-red-400 text-sm">{formErrors.role}</p>
             )}
           </div>
-          <div className="row-span-2">
-            <label className="block text-sm font-medium text-gray-50">
-              Address <span className="text-red-500">*</span>
-            </label>
-            <textarea
-              placeholder="Enter Address"
-              type="text"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              className="mt-1 mb-1 h-full p-2 block w-full border border-gray-300 rounded-md"
-            ></textarea>
-            {formErrors.address && (
-              <p className="text-red-400 text-sm">{formErrors.address}</p>
-            )}
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-50">
-              Country <span className="text-red-500">*</span>
-            </label>
 
-            <select
-              name="country"
-              value={formData.country}
-              onChange={handleChange}
-              className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
-            >
-              <option className="bg-gray-400" value="">
-                Select Country
-              </option>
-              {countries.map((c) => (
-                <option className="bg-gray-400" key={c._id} value={c._id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-            {formErrors.country && (
-              <p className="text-red-400 text-sm">{formErrors.country}</p>
-            )}
-          </div>
-          <div>
+          <div className="">
             <label className="block text-sm font-medium text-gray-50">
-              State <span className="text-red-500">*</span>
-            </label>
-
-            <select
-              name="state"
-              value={formData.state}
-              onChange={handleChange}
-              className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
-            >
-              <option className="bg-gray-400" value="">
-                Select State
-              </option>
-              {states.map((s) => (
-                <option className="bg-gray-400" key={s._id} value={s._id}>
-                  {s.name}
-                </option>
-              ))}
-            </select>
-            {formErrors.state && (
-              <p className="text-red-400 text-sm">{formErrors.state}</p>
-            )}
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-50">
-              City <span className="text-red-500">*</span>
-            </label>
-
-            <select
-              name="city"
-              value={formData.city}
-              onChange={handleChange}
-              className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
-            >
-              <option className="bg-gray-400" value="">
-                Select City
-              </option>
-              {cities.map((c) => (
-                <option className="bg-gray-400" key={c._id} value={c._id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-            {formErrors.city && (
-              <p className="text-red-400 text-sm">{formErrors.city}</p>
-            )}
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-50">
-              Pincode <span className="text-red-500">*</span>
-            </label>
-            <input
-              placeholder="Enter Pincode"
-              type="text"
-              name="pin"
-              onChange={handleChange}
-              value={formData.pin}
-              className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
-            />
-            {formErrors.pin && (
-              <p className="text-red-400 text-sm">{formErrors.pin}</p>
-            )}
-          </div>
-          <div className="mt-8">
-            <label className="block text-sm font-medium text-gray-50">
-              Marital Status <span className="text-red-500">*</span>
+              Marital Status *
             </label>
 
             <select
@@ -609,9 +527,9 @@ export default function UpdateEmployeeOnBarding() {
               <p className="text-red-400 text-sm">{formErrors.maritalStatus}</p>
             )}
           </div>
-          <div className="mt-8">
+          <div className="">
             <label className="block text-sm font-medium text-gray-50">
-              Salary <span className="text-red-500">*</span>
+              Salary *
             </label>
             <input
               placeholder="Salary"
@@ -623,6 +541,27 @@ export default function UpdateEmployeeOnBarding() {
             />
             {formErrors.salary && (
               <p className="text-red-400 text-sm">{formErrors.salary}</p>
+            )}
+          </div>
+          <div className="">
+            <label className="block text-sm font-medium text-gray-50">
+              Company *
+            </label>
+            <select
+              name="companyId"
+              value={formData.companyId}
+              onChange={handleChange}
+              className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
+            >
+              <option className="bg-gray-400">Select Company</option>
+              {companies.map((c) => (
+                <option className="bg-gray-400" key={c._id} value={c._id}>
+                  {c.companyName}
+                </option>
+              ))}
+            </select>
+            {formErrors.companyId && (
+              <p className="text-red-400 text-sm">{formErrors.companyId}</p>
             )}
           </div>
           {/* Example for Image */}
@@ -646,6 +585,127 @@ export default function UpdateEmployeeOnBarding() {
               />
             )}
           </div> */}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-5">
+          {/* Address 1 */}
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-50">
+              Address *
+            </label>
+            <textarea
+              placeholder="Enter Address"
+              type="text"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              className="mt-1 mb-1 h-full p-2 block w-full border border-gray-300 rounded-md"
+            ></textarea>
+            {formErrors.address && (
+              <p className="text-red-400 text-sm">{formErrors.address}</p>
+            )}
+          </div>
+
+          <div className="row-span-2">
+            {/* Country */}
+
+            <div className="md:col-span-1">
+              <label className="block text-sm font-medium text-gray-50">
+                Country *
+              </label>
+
+              <select
+                name="country"
+                value={formData.country}
+                onChange={handleChange}
+                className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
+              >
+                <option className="bg-gray-400" value="">
+                  Select Country
+                </option>
+                {countries.map((c) => (
+                  <option className="bg-gray-400" key={c._id} value={c._id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+              {formErrors.country && (
+                <p className="text-red-400 text-sm">{formErrors.country}</p>
+              )}
+            </div>
+
+            {/* City */}
+            <div className="md:col-span-1">
+              <label className="block text-sm font-medium text-gray-50">
+                City *
+              </label>
+
+              <select
+                name="city"
+                onChange={handleChange}
+                value={formData.city}
+                className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
+              >
+                <option className="bg-gray-400" value="">
+                  Select City
+                </option>
+                {cities.map((c) => (
+                  <option className="bg-gray-400" key={c._id} value={c._id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+              {formErrors.city && (
+                <p className="text-red-400 text-sm">{formErrors.city}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="row-span-2">
+            {/* State */}
+            <div className="md:col-span-1">
+              <label className="block text-sm font-medium text-gray-50">
+                State *
+              </label>
+
+              <select
+                name="state"
+                onChange={handleChange}
+                value={formData.state}
+                className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
+              >
+                <option className="bg-gray-400" value="">
+                  Select State
+                </option>
+                {states.map((s) => (
+                  <option className="bg-gray-400" key={s._id} value={s._id}>
+                    {s.name}
+                  </option>
+                ))}
+              </select>
+              {formErrors.state && (
+                <p className="text-red-400 text-sm">{formErrors.state}</p>
+              )}
+            </div>
+
+            {/* PIN */}
+            <div className="md:col-span-1">
+              <label className="block text-sm font-medium text-gray-50">
+                Pincode *
+              </label>
+              <input
+                placeholder="Enter Pincode"
+                type="text"
+                name="pin"
+                value={formData.pin}
+                onChange={handleChange}
+                className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
+              />
+              {formErrors.pin && (
+                <p className="text-red-400 text-sm">{formErrors.pin}</p>
+              )}
+            </div>
+          </div>
         </div>
 
         <div className="flex justify-end gap-4 items-center mt-5">

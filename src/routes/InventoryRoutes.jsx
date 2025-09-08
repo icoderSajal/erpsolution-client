@@ -9,6 +9,10 @@ import SubCategoryMaster from "../pages/inventory/subCategory/SubCategoryMaster"
 import ItemMasterList from "../pages/inventory/itemMaster/ItemMasterList";
 import ItemMasterCreation from "../pages/inventory/itemMaster/ItemMasterCreation";
 import EditItemMaster from "../pages/inventory/itemMaster/EditItemMaster";
+import StockMaster from "../pages/inventory/stocks/StockMaster";
+import GoodReciptNotelist from "../pages/inventory/stocks/GoodReciptNotelist";
+import UpdateGoodReciptNote from "../pages/inventory/stocks/UpdateGoodReciptNote";
+import GoodReciptNoteCreation from "../pages/inventory/stocks/GoodReciptNoteCreation";
 
 const InventoryRoutes = () => (
   <>
@@ -29,7 +33,10 @@ const InventoryRoutes = () => (
       <Route path="itemmaster-list" element={<ItemMasterList />} />
       <Route path="create-item" element={<ItemMasterCreation />} />
       <Route path="edit-itemmaster/:id" element={<EditItemMaster />} />
-      <Route path="stocks" element={<EditItemMaster />} />
+      <Route path="stocks" element={<StockMaster />} />
+      <Route path="grn-list" element={<GoodReciptNotelist />} />
+      <Route path="update-grn/:id" element={<UpdateGoodReciptNote />} />
+      <Route path="create-grn" element={<GoodReciptNoteCreation />} />
     </Route>
   </>
 );

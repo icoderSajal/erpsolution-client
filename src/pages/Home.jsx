@@ -84,8 +84,8 @@ const Home = () => {
           <div className="grid gap-4 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
             {menus.map((m) => (
               <NavLink key={m._id} to={m.modulePath}>
-                <div className="bg-black text-white transition-all duration-700 hover:ring-1 rounded-2xl">
-                  <h1 className="text-white p-4 font-bold text-center">
+                <div className="bg-black h-[100px] flex justify-center items-center text-white transition-all duration-700 hover:ring-1 rounded-2xl">
+                  <h1 className="text-white text-2xl p-4 font-bold text-center">
                     {m.moduleName}
                   </h1>
                 </div>

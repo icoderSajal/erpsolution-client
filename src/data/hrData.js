@@ -22,3 +22,27 @@ export const annulHolidays =
             ondate: "20 November"
         }
     ]
+
+
+export const finYearData = [
+    {
+        id: 1,
+        finyear: "2025-26",
+
+    },
+    {
+        id: 2,
+        finyear: "2026-27",
+
+    },
+    {
+        id: 3,
+        finyear: "2027-28",
+
+    },
+    {
+        id: 1,
+        finyear: "2029-30",
+
+    }
+]

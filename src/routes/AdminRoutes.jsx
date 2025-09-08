@@ -12,7 +12,7 @@ import CompnayMasterList from "../pages/admin/company/CompnayMasterList";
 import EditCmpanyMaster from "../pages/admin/company/EditCmpanyMaster";
 import ClientMaster from "../pages/admin/clients/ClientMaster";
 import ChannelPartner from "../pages/admin/partner/ChannelPartner";
-import VendorMaster from "../pages/admin/vendor/VendorMaster";
+import VendorMasterList from "../pages/admin/vendor/VendorMasterList";
 import GstMaster from "../pages/admin/gst/GstMaster";
 import TdsMaster from "../pages/admin/tds/TdsMaster";
 import CustomerMaster from "../pages/admin/customer/CustomerMaster";
@@ -21,6 +21,8 @@ import SystemSetting from "../pages/admin/systemsetting/SystemSetting";
 import UserAccessManagement from "../pages/admin/useraccesscontrole/UserAccessManagement";
 import AppModules from "../pages/admin/appmodules/AppModules";
 import Dashboard from "../pages/admin/dashboard/Dashboard";
+import VendorCreation from "../pages/admin/vendor/VendorCreation";
+import EditVendor from "../pages/admin/vendor/EditVendor";
 
 const AdminRoutes = () => {
   return (
@@ -45,7 +47,10 @@ const AdminRoutes = () => {
       <Route path="company-master/:id" element={<EditCmpanyMaster />} />
       <Route path="client-master" element={<ClientMaster />} />
       <Route path="partner-master" element={<ChannelPartner />} />
-      <Route path="vendor-master" element={<VendorMaster />} />
+      <Route path="vendor-list" element={<VendorMasterList />} />
+      <Route path="create-vendor" element={<VendorCreation />} />
+      <Route path="edit-vendor/:id" element={<EditVendor />} />
+
       <Route path="gst" element={<GstMaster />} />
       <Route path="tds" element={<TdsMaster />} />
       <Route path="customer-master" element={<CustomerMaster />} />

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import api from "../../../api/axios";
 
 const CompanyMaster = () => {
   const [formData, setFormData] = useState({
@@ -28,8 +29,8 @@ const CompanyMaster = () => {
   const navigate = useNavigate();
   // Fetch countries
   useEffect(() => {
-    axios
-      .get("http://localhost:9000/api/local/countries")
+    api
+      .get("/local/countries")
       .then((res) => setCountries(res.data.countries))
       .catch(() => console.log("Error fetching countries"));
   }, []);
@@ -37,8 +38,8 @@ const CompanyMaster = () => {
   // Fetch states when country changes
   useEffect(() => {
     if (formData.country) {
-      axios
-        .get(`http://localhost:9000/api/local/states/${formData.country}`)
+      api
+        .get(`/local/states/${formData.country}`)
         .then((res) => setStates(res.data.states))
         .catch(() => console.log("Error fetching states"));
     } else {
@@ -50,8 +51,8 @@ const CompanyMaster = () => {
   // Fetch cities when state changes
   useEffect(() => {
     if (formData.state) {
-      axios
-        .get(`http://localhost:9000/api/local/cities/${formData.state}`)
+      api
+        .get(`/local/cities/${formData.state}`)
         .then((res) => setCities(res.data.cities))
         .catch(() => console.log("Error fetching cities"));
     } else {
@@ -99,13 +100,9 @@ const CompanyMaster = () => {
     if (!validate()) return;
 
     try {
-      const res = await axios.post(
-        "http://localhost:9000/api/admin/create-company",
-        formData,
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
-      );
+      const res = await api.post("/admin/create-company", formData, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
       if (res.data.success) {
         alert("Company saved successfully");
         navigate("/admin/company-master-list");

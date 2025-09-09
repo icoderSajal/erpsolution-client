@@ -4,7 +4,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 
 import { ChevronLeftCircle } from "lucide-react";
 
-import axios from "axios";
+import api from "../../api/axios";
 import { useAuth } from "../../contexts/AuthContext";
 
 export default function InventorySummary() {
@@ -14,14 +14,11 @@ export default function InventorySummary() {
   const navigate = useNavigate();
   const fetchData = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:9000/api/admin/route-permissions",
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const res = await axios.get("/admin/route-permissions", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
 
       if (res.data.success) {
         setRoutes(res.data.routes);

@@ -154,7 +154,7 @@ export default function PurchaseOrderCreation() {
       grandTotal,
       
     };
-    alert(JSON.stringify(payload));
+
 
     try {
       const response = await api.post("/purchase/create-po", payload, {

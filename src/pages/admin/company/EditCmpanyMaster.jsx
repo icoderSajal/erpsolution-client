@@ -1,7 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../../api/axios";
 import toast from "react-hot-toast";
 
 const EditCmpanyMaster = () => {
@@ -36,14 +36,11 @@ const EditCmpanyMaster = () => {
   useEffect(() => {
     const fetchCompany = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:9000/api/admin/getcompany/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+        const response = await api.get(`/admin/getcompany/${id}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
 
         if (response.data.success) {
           const company = response.data.company;
@@ -83,8 +80,8 @@ const EditCmpanyMaster = () => {
 
   // Fetch countries
   useEffect(() => {
-    axios
-      .get("http://localhost:9000/api/local/countries")
+    api
+      .get("/local/countries")
       .then((res) => setCountries(res.data.countries))
       .catch(() => console.log("Error fetching countries"));
   }, []);
@@ -92,8 +89,8 @@ const EditCmpanyMaster = () => {
   // Fetch states when country changes
   useEffect(() => {
     if (formData.country) {
-      axios
-        .get(`http://localhost:9000/api/local/states/${formData.country}`)
+      api
+        .get(`/local/states/${formData.country}`)
         .then((res) => setStates(res.data.states))
         .catch(() => console.log("Error fetching states"));
     } else {
@@ -105,8 +102,8 @@ const EditCmpanyMaster = () => {
   // Fetch cities when state changes
   useEffect(() => {
     if (formData.state) {
-      axios
-        .get(`http://localhost:9000/api/local/cities/${formData.state}`)
+      api
+        .get(`/local/cities/${formData.state}`)
         .then((res) => setCities(res.data.cities))
         .catch(() => console.log("Error fetching cities"));
     } else {
@@ -155,13 +152,9 @@ const EditCmpanyMaster = () => {
     if (!validate()) return;
 
     try {
-      const res = await axios.put(
-        `http://localhost:9000/api/admin/edit-company/${id}`,
-        formData,
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
-      );
+      const res = await api.put(`/admin/edit-company/${id}`, formData, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
 
       if (res.data.success) {
         toast.success("Company updated successfully");

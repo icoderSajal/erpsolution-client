@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
-
 import autoTable from "jspdf-autotable";
-
 import api from "../../../api/axios"; // adjust the path to your axios instance
 import { Link, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -11,7 +9,7 @@ import {
   ChevronLeftCircle,
   Download,
   PrinterCheck,
-  ReceiptPoundSterling,
+  
 } from "lucide-react";
 import { useRef } from "react";
 

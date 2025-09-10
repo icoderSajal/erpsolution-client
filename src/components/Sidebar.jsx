@@ -12,14 +12,11 @@ export default function Sidebar() {
   useEffect(() => {
     const fetchModules = async () => {
       try {
-        const res = await api.get(
-          `http://localhost:9000/api/admin/getappdata`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+        const res = await api.get(`/admin/getappmodules`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
 
         if (res.data.success) {
           setMenus(res.data.appData);

@@ -5,12 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { PenBoxIcon, Trash2Icon } from "lucide-react";
 import api from "../../../api/axios";
 import useFetchData from "../../../hooks/useFetchData";
-import {
-  BiSolidUpArrow,
-  BiSolidDownArrowAlt,
-  BiSolidDownArrowCircle,
-  BiSolidDownArrow,
-} from "react-icons/bi";
+import { BiSolidUpArrow, BiSolidDownArrow } from "react-icons/bi";
 const Permissions = () => {
   const navigate = useNavigate();
   const [menus, setMenus] = useState([]);
@@ -151,19 +146,6 @@ const Permissions = () => {
     return sorted;
   };
 
-  // filter by search
-  // useEffect(() => {
-  //   if (search.trim() === "") {
-  //     setFilteredMenus(menus);
-  //   } else {
-  //     setFilteredMenus(
-  //       menus.filter((m) =>
-  //         m.permissionName.toLowerCase().includes(search.toLowerCase())
-  //       )
-  //     );
-  //     setCurrentPage(1);
-  //   }
-  // }, [search, menus]);
   useEffect(() => {
     let updatedMenus = [...menus];
 

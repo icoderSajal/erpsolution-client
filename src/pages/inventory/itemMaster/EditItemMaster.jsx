@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
+
 import toast from "react-hot-toast";
 import api from "../../../api/axios";
 
@@ -28,14 +28,11 @@ export default function EditItemMaster() {
   useEffect(() => {
     const fetchItem = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:9000/api/inventory/get-singleitem/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+        const response = await api.get(`/inventory/get-singleitem/${id}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
 
         if (response.data.success) {
           const item = response.data.item;
@@ -71,14 +68,11 @@ export default function EditItemMaster() {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:9000/api/inventory/get-allcategories",
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const response = await api.get("/inventory/get-allcategories", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       if (response.data.success) {
         setCategories(response.data.categories);
       }
@@ -90,14 +84,11 @@ export default function EditItemMaster() {
   // Fetch sub categories
   const fetchSubCategories = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:9000/api/inventory/get-allsubcategories",
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const response = await api.get("/inventory/get-allsubcategories", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       if (response.data.success) {
         setSubCategories(response.data.subcategories);
       }
@@ -109,14 +100,11 @@ export default function EditItemMaster() {
   // Fetch units
   const fetchUnits = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:9000/api/inventory/get-allunits",
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const response = await api.get("/inventory/get-allunits", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       if (response.data.success) {
         setUnits(response.data.units);
       }
@@ -173,13 +161,9 @@ export default function EditItemMaster() {
     if (!validate()) return;
 
     try {
-      const res = await axios.put(
-        `http://localhost:9000/api/inventory/update-item/${id}`,
-        formData,
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
-      );
+      const res = await api.put(`/inventory/update-item/${id}`, formData, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
       if (res.data.success) {
         toast.success("Item Update successfully");
         navigate("/inventory");

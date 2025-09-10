@@ -14,7 +14,7 @@ export default function InventorySummary() {
   const navigate = useNavigate();
   const fetchData = async () => {
     try {
-      const res = await axios.get("/admin/route-permissions", {
+      const res = await api.get("/admin/route-permissions", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },

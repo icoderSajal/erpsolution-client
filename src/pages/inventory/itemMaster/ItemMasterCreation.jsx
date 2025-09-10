@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+
 import toast from "react-hot-toast";
 import api from "../../../api/axios";
 
@@ -27,14 +27,11 @@ export default function ItemMasterCreation() {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:9000/api/inventory/get-allcategories",
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const response = await api.get("/inventory/get-allcategories", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       if (response.data.success) {
         setCategories(response.data.categories);
       }
@@ -47,8 +44,8 @@ export default function ItemMasterCreation() {
   const fetchSubCategories = async () => {
     if (formData.categoryId) {
       try {
-        const response = await axios.get(
-          `http://localhost:9000/api/inventory/subcategory/${formData.categoryId}`,
+        const response = await api.get(
+          `/inventory/subcategory/${formData.categoryId}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -67,14 +64,11 @@ export default function ItemMasterCreation() {
   // Fetch units
   const fetchUnits = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:9000/api/inventory/get-allunits",
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const response = await api.get("/inventory/get-allunits", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       if (response.data.success) {
         setUnits(response.data.units);
       }
@@ -135,13 +129,9 @@ export default function ItemMasterCreation() {
     if (!validate()) return;
 
     try {
-      const res = await axios.post(
-        "http://localhost:9000/api/inventory/create-item",
-        formData,
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
-      );
+      const res = await api.post("/inventory/create-item", formData, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
       if (res.data.success) {
         toast.success("Item saved successfully");
         navigate("/inventory/itemmaster-list");

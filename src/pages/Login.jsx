@@ -3,7 +3,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
-import bg from "../assets/bg.png";
+
 
 const Login = () => {
   const { login } = useAuth();

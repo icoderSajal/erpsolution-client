@@ -342,7 +342,7 @@ const Roles = () => {
                     name="routerEndpoint"
                     value={menu.routerEndpoint}
                     onChange={handleEndpointChange}
-                    placeholder="e.g., Manager"
+                    placeholder="e.g., Endpoint"
                     className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-teal-500"
                   />
                 </div>

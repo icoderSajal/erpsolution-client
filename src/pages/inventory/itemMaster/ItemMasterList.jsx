@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../../api/axios";
-import axios from "axios";
+
 import { FaEdit, FaTrash } from "react-icons/fa";
 import toast from "react-hot-toast";
 
@@ -49,8 +49,8 @@ export default function ItemMasterList() {
     const confirmDelete = window.confirm("Do you want to delete this Item?");
     if (!confirmDelete) return;
     try {
-      const response = await axios.put(
-        `http://localhost:9000/api/inventory/delete-item/${Id}`,
+      const response = await api.put(
+        `/inventory/delete-item/${Id}`,
         { active: 0 }, // body
         {
           headers: {

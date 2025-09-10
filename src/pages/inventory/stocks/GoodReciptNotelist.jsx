@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../../api/axios";
-import axios from "axios";
+
 import toast from "react-hot-toast";
-import { View, SquarePen, Trash } from "lucide-react";
+
+import { SquarePen, CheckCheck, X } from "lucide-react";
 
 export default function GoodReciptNotelist() {
   const [menus, setMenus] = useState([]);
@@ -16,13 +17,12 @@ export default function GoodReciptNotelist() {
 
   const fetchData = async () => {
     try {
-      const response = await api.get("/purchase/getapprovedpurchase", {
+      const response = await api.get("/grn/all-grns", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       if (response.data.success) {
-        setMenus(response.data.orders);
-        setFilteredMenus(response.data.orders);
-        //alert(setMenus(response.data.orders));
+        setMenus(response.data.grns);
+        setFilteredMenus(response.data.grns);
       }
     } catch {
       toast.error("Failed to fetch menus");
@@ -57,6 +57,27 @@ export default function GoodReciptNotelist() {
     const month = date.toLocaleString("en-US", { month: "short" }); // mmm
     const year = date.getFullYear(); // yyyy
     return `${day}/${month}/${year}`;
+  };
+
+  const handleApprove = async (id, menu) => {
+    try {
+      const res = await api.put(
+        `/grn/approve-grn/${id}`,
+        { menu },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
+      if (res.data.success) {
+        toast.success("GRN Approved & Stock Updated!");
+        fetchData(); // refresh list
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (error) {
+      alert(error);
+      toast.error("Approval failed");
+    }
   };
 
   return (
@@ -97,12 +118,10 @@ export default function GoodReciptNotelist() {
               <thead className="bg-gray-100 text-gray-800 text-sm uppercase">
                 <tr>
                   <th className="px-6 py-3 text-left">#</th>
-                  <th className="px-6 py-3 text-left">Vendor Name</th>
+                  <th className="px-6 py-3 text-left">Grn No.</th>
                   <th className="px-6 py-3 text-left">PO Date</th>
                   <th className="px-6 py-3 text-left">FinYear</th>
-                  <th className="px-6 py-3 text-left">Country</th>
-                  <th className="px-6 py-3 text-left">State</th>
-                  <th className="px-6 py-3 text-left">Total</th>
+                  <th className="px-6 py-3 text-left">Status</th>
 
                   <th className="px-6 py-3 text-left">Action</th>
                 </tr>
@@ -116,22 +135,53 @@ export default function GoodReciptNotelist() {
                     <td className="px-6 py-3">
                       {indexOfFirstItem + index + 1}
                     </td>
-                    <td className="px-6 py-3">{menu.vendorId?.vendorName}</td>
-                    <td className="px-6 py-3">{formatDate(menu.poDate)}</td>
-                    <td className="px-6 py-3">{menu.finYear}</td>
-                    <td className="px-6 py-3">{menu.country.name}</td>
-                    <td className="px-6 py-3">{menu.state.name}</td>
-                    <td className="px-6 py-3">{menu.grandTotal}</td>
+                    <td className="px-6 py-3">{menu.grnNo}</td>
+                    <td className="px-6 py-3">{formatDate(menu.grnDate)}</td>
+                    <td className="px-6 py-3">{menu.finyear}</td>
+                    <td className="px-6 py-3">{menu.grnStatus}</td>
 
-                    <td className="px-6 py-4 text-center space-x-3">
-                      <button
-                        className=" px-2 py-1 bg-black text-white rounded-2xl"
-                        onClick={() =>
-                          navigate(`/inventory/update-grn/${menu._id}`)
-                        }
-                      >
-                        <SquarePen />
-                      </button>
+                    <td className="px-6 py-4 text-left space-x-3">
+                      <>
+                        {menu.grnStatus === "Pending" ? (
+                          <>
+                            {/* Edit */}
+                            <div className="relative inline-block group">
+                              <button
+                                className="px-2 py-1 bg-black text-white rounded-2xl"
+                                onClick={() =>
+                                  navigate(
+                                    `/purchase/edit-purchase-order/${menu._id}`
+                                  )
+                                }
+                              >
+                                <SquarePen />
+                              </button>
+                              <span className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 text-xs bg-gray-800 text-white rounded opacity-0 group-hover:opacity-100 transition">
+                                Edit
+                              </span>
+                            </div>
+                            {/* Approve */}
+
+                            <div className="relative inline-block group">
+                              <button
+                                className="px-2 py-1 bg-black text-white rounded-2xl"
+                                onClick={() => handleApprove(menu._id)}
+                              >
+                                <CheckCheck />
+                              </button>
+                              <span className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 text-xs bg-gray-800 text-white rounded opacity-0 group-hover:opacity-100 transition">
+                                Approve
+                              </span>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div className="relative inline-block group">
+                              <h1 className="text-teal-600">GRN Approved</h1>
+                            </div>
+                          </>
+                        )}
+                      </>
                     </td>
                   </tr>
                 ))}

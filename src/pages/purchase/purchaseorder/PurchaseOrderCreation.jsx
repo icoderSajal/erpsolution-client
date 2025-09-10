@@ -24,7 +24,7 @@ export default function PurchaseOrderCreation() {
   });
 
   const { user } = useAuth();
-  const [errors, setErrors] = useState({});
+  const [formErrors, setFormErrors] = useState({});
   const [vendors, setVendors] = useState([]);
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
@@ -49,6 +49,11 @@ export default function PurchaseOrderCreation() {
       })
       .then((res) => res.data.success && setItems(res.data.items));
   }, []);
+  // Generate random GRN No with prefix GRN-
+  useEffect(() => {
+    const randomNo = Math.floor(100 + Math.random() * 900); // random 3-digit
+    setFormData((prev) => ({ ...prev, orderNo: `PO-${randomNo}` }));
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -61,6 +66,25 @@ export default function PurchaseOrderCreation() {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
+
+  // Validation
+  const validate = () => {
+    const errors = {};
+    if (!formData.orderNo) errors.orderNo = "Order No. is required";
+    if (!formData.vendorId) errors.vendorId = "Please Select  Vendor";
+    if (!formData.poDate) errors.poDate = "Please Select Date";
+    if (!formData.finYear) errors.finYear = "Please Select Financial Year";
+    if (!formData.address) errors.address = "Address is required";
+    if (!formData.pin) errors.pin = "Please Select Pincode";
+    if (!formData.country) errors.country = "Please Select  Country";
+
+    if (!formData.state) errors.state = "Please Select  State";
+    if (!formData.city) errors.city = "Please Select  City";
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   // Fetch states when country changes
   useEffect(() => {
     if (formData.country) {
@@ -146,15 +170,13 @@ export default function PurchaseOrderCreation() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    if (!validate()) return;
     const payload = {
       ...formData,
       createdBy: user?._id,
       items: orderItems,
       grandTotal,
-      
     };
-
 
     try {
       const response = await api.post("/purchase/create-po", payload, {
@@ -187,10 +209,11 @@ export default function PurchaseOrderCreation() {
                 value={formData.orderNo}
                 onChange={handleChange}
                 placeholder="e.g.,Order Number"
+                readOnly
                 className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-500"
               />
-              {errors.orderNo && (
-                <p className="text-red-500 text-xs">{errors.orderNo}</p>
+              {formErrors.orderNo && (
+                <p className="text-red-500 text-xs">{formErrors.orderNo}</p>
               )}
             </div>
             <div>
@@ -208,8 +231,8 @@ export default function PurchaseOrderCreation() {
                   </option>
                 ))}
               </select>
-              {errors.vendorId && (
-                <p className="text-red-500 text-xs">{errors.vendorId}</p>
+              {formErrors.vendorId && (
+                <p className="text-red-500 text-xs">{formErrors.vendorId}</p>
               )}
             </div>
             <div>
@@ -222,8 +245,8 @@ export default function PurchaseOrderCreation() {
                 placeholder="e.g., Enter Date"
                 className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-500"
               />
-              {errors.poDate && (
-                <p className="text-red-500 text-xs">{errors.poDate}</p>
+              {formErrors.poDate && (
+                <p className="text-red-500 text-xs">{formErrors.poDate}</p>
               )}
             </div>
             <div>
@@ -243,8 +266,8 @@ export default function PurchaseOrderCreation() {
                 <option value="2027-28">2027-28</option>
                 <option value="2029-30">2029-30</option>
               </select>
-              {errors.finYear && (
-                <p className="text-red-500 text-xs">{errors.finYear}</p>
+              {formErrors.finYear && (
+                <p className="text-red-500 text-xs">{formErrors.finYear}</p>
               )}
             </div>
           </div>
@@ -263,8 +286,8 @@ export default function PurchaseOrderCreation() {
                 onChange={handleChange}
                 className="mt-1 mb-1 h-full p-2 block w-full border border-gray-300 rounded-md"
               ></textarea>
-              {errors.address && (
-                <p className="text-red-400 text-sm">{errors.address}</p>
+              {formErrors.address && (
+                <p className="text-red-400 text-sm">{formErrors.address}</p>
               )}
             </div>
 
@@ -291,8 +314,8 @@ export default function PurchaseOrderCreation() {
                     </option>
                   ))}
                 </select>
-                {errors.country && (
-                  <p className="text-red-400 text-sm">{errors.country}</p>
+                {formErrors.country && (
+                  <p className="text-red-400 text-sm">{formErrors.country}</p>
                 )}
               </div>
 
@@ -317,8 +340,8 @@ export default function PurchaseOrderCreation() {
                     </option>
                   ))}
                 </select>
-                {errors.city && (
-                  <p className="text-red-400 text-sm">{errors.city}</p>
+                {formErrors.city && (
+                  <p className="text-red-400 text-sm">{formErrors.city}</p>
                 )}
               </div>
             </div>
@@ -346,8 +369,8 @@ export default function PurchaseOrderCreation() {
                   ))}
                 </select>
 
-                {errors.state && (
-                  <p className="text-red-400 text-sm">{errors.state}</p>
+                {formErrors.state && (
+                  <p className="text-red-400 text-sm">{formErrors.state}</p>
                 )}
               </div>
 
@@ -364,15 +387,15 @@ export default function PurchaseOrderCreation() {
                   onChange={handleChange}
                   className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
                 />
-                {errors.pin && (
-                  <p className="text-red-400 text-sm">{errors.pin}</p>
+                {formErrors.pin && (
+                  <p className="text-red-400 text-sm">{formErrors.pin}</p>
                 )}
               </div>
             </div>
           </div>
 
           {/* Your form fields above remain same */}
-          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mx-[50px] mb-5">
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mx-[50px] mb-5 mt-10">
             <div>
               <label className="block text-sm font-bold mb-1">Item Name</label>
               <select

@@ -17,34 +17,6 @@ export default function EmployeeMasterOnBoarding() {
 
   const navigate = useNavigate();
 
-  // // // Generate next employee ID
-  // useEffect(() => {
-  //   const fetchLastEmpId = async () => {
-  //     try {
-  //       const res = await api.get("/hradmin/get-last-employeeid", {
-  //         headers: {
-  //           Authorization: `Bearer ${localStorage.getItem("token")}`,
-  //         },
-  //       });
-
-  //       if (res.data.lastId) {
-  //         const num = parseInt(res.data.lastId.replace("Emp-", "")) + 1;
-  //         const newId = `Emp-${num.toString().padStart(4, "0")}`;
-  //         setEmployeeId(newId);
-  //         setFormData((prev) => ({ ...prev, employeeId: newId }));
-  //       } else {
-  //         setEmployeeId("Emp-0001");
-  //         setFormData((prev) => ({ ...prev, employeeId: "Emp-0001" }));
-  //       }
-  //     } catch {
-  //       setEmployeeId("Emp-0001");
-  //       setFormData((prev) => ({ ...prev, employeeId: "Emp-0001" }));
-  //     }
-  //   };
-  //   fetchLastEmpId();
-  // }, []);
-
-  // Fetch countries
   useEffect(() => {
     api
       .get("/local/countries")

@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+
 import api from "../../../api/axios";
+import toast from "react-hot-toast";
 
 const CompanyMaster = () => {
   const [formData, setFormData] = useState({
@@ -104,12 +105,12 @@ const CompanyMaster = () => {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       if (res.data.success) {
-        alert("Company saved successfully");
+        toast.success("Company saved successfully");
         navigate("/admin/company-master-list");
       }
     } catch (error) {
-      alert(error);
-      alert("Error saving company");
+      console.error(error);
+      toast.error("Error saving company");
     }
   };
 

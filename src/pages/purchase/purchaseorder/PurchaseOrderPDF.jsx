@@ -5,19 +5,29 @@ import autoTable from "jspdf-autotable";
 import api from "../../../api/axios"; // adjust the path to your axios instance
 import { Link, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
-import {
-  ChevronLeftCircle,
-  Download,
-  PrinterCheck,
-  
-} from "lucide-react";
+import { ChevronLeftCircle, Download, PrinterCheck } from "lucide-react";
 import { useRef } from "react";
+import bg from "../../../assets/bg.png";
 
 import { useReactToPrint } from "react-to-print";
 export default function PurchaseOrderView() {
   const [order, setOrder] = useState(null);
+  const [company, setCompany] = useState([]);
   const contentRef = useRef();
   const { id } = useParams();
+
+  const fetchData = async () => {
+    try {
+      const response = await api.get("/admin/getcompanies", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+      if (response.data.success) {
+        setCompany(response.data.companies);
+      }
+    } catch {
+      toast.error("Failed to fetch menus");
+    }
+  };
 
   useEffect(() => {
     const fetchItem = async () => {
@@ -58,6 +68,7 @@ export default function PurchaseOrderView() {
     };
 
     fetchItem();
+    fetchData();
   }, [id]);
 
   const downloadPDF = () => {
@@ -112,6 +123,42 @@ export default function PurchaseOrderView() {
     <>
       <div className="p-6 text-white bg-gray-400" ref={contentRef}>
         <h1 className="text-xl font-bold mb-4">Purchase Order</h1>
+        <div className="flex justify-between items-center gap-2">
+          <div className="bg-red-400">
+            <img src={bg} alt="logo" height={100} width={100} />
+          </div>
+          <div className="">
+            {company.length > 0 ? (
+              company.map((c) => (
+                <>
+                  <div className="flex justify-evenly items-center gap-2">
+                    <div className="p-4 ">
+                      <h1 className="text-2xl font-bold">{c.companyName}</h1>
+                      <p className="text-right font-semibold text-xl">
+                        {c.address1} {c.address2}
+                      </p>
+
+                      <p className="text-right font-semibold text-xl"></p>
+                      <p className="text-right font-semibold text-xl">
+                        {c.city?.name} {c.state?.name}
+                      </p>
+                      <p className="text-right font-semibold text-xl">
+                        {c.pin}
+                      </p>
+                      <p className="text-right font-semibold text-xl">
+                        {c.gstNumber}
+                      </p>
+                    </div>
+                  </div>
+                </>
+              ))
+            ) : (
+              <>
+                <h1>No Data Found</h1>
+              </>
+            )}
+          </div>
+        </div>
 
         <div className="border rounded-lg p-4 shadow-sm">
           <h2 className="font-semibold text-lg mb-2">

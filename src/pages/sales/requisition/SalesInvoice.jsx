@@ -58,49 +58,108 @@ export default function SalesInvoice() {
   const downloadPDF = () => {
     if (!order) return;
 
-    const doc = new jsPDF();
-    alert(JSON.stringify(doc));
+    const doc = new jsPDF("p", "pt", "a4");
+    const pageWidth = doc.internal.pageSize.getWidth();
 
-    doc.setFontSize(16);
-    doc.text("Sales Order", 14, 20);
+    // HEADER BAR
+    doc.setFillColor(34, 197, 94); // green bar
+    doc.rect(0, 0, pageWidth, 60, "F");
+    doc.setFontSize(22);
+    doc.setTextColor(255, 255, 255);
+    doc.text("INVOICE", 40, 38);
 
+    // Company info (right side in header)
+    if (companies.length > 0) {
+      const comp = companies[0];
+      doc.setFontSize(12);
+      doc.setTextColor(255, 255, 255);
+      doc.text(comp.companyName || "", pageWidth - 200, 20);
+      doc.text(comp.address1 || "", pageWidth - 200, 35);
+      doc.text(
+        `${comp.city?.name || ""}, ${comp.state?.name || ""}`,
+        pageWidth - 200,
+        50
+      );
+    }
+
+    // Reset text color
+    doc.setTextColor(0, 0, 0);
+
+    // Customer + Invoice details
     doc.setFontSize(12);
-    doc.text(`Order No: ${order.saleNo}`, 14, 30);
-    doc.text(
-      `PO Date: ${new Date(order.reqDate).toLocaleDateString()}`,
-      14,
-      38
-    );
-    doc.text(`Financial Year: ${order.finYear}`, 14, 46);
-    doc.text(`Company: ${order.companyName}`, 14, 54);
-    doc.text(`Address: ${order.address}`, 14, 62);
-    // doc.text(
-    //   `Location: ${order.city.name}, ${order.state.name}, ${order.country.name}`,
-    //   14,
-    //   70
-    // );
-    // doc.text(`PIN: ${order.pin}`, 14, 78);
+    doc.text("Billed To:", 40, 100);
+    doc.setFont("helvetica", "bold");
+    doc.text(order.customerName || "", 40, 115);
+    doc.setFont("helvetica", "normal");
+    doc.text(order.address || "", 40, 130);
 
-    // Table for items
+    doc.text(`Invoice No: ${order.saleNo}`, pageWidth - 200, 100);
+    doc.text(
+      `Date: ${new Date(order.reqDate).toLocaleDateString()}`,
+      pageWidth - 200,
+      115
+    );
+    doc.text(`Financial Year: ${order.finYear}`, pageWidth - 200, 130);
+
+    // TABLE
     const tableData = order.items.map((item, i) => [
       i + 1,
       item.itemName,
       item.itemQty,
-      item.itemRate,
-      item.itemAmt,
+      `₹${item.itemRate}`,
+      `₹${item.itemAmt}`,
     ]);
 
     autoTable(doc, {
-      startY: 90,
+      startY: 160,
       head: [["#", "Item Name", "Qty", "Rate", "Amount"]],
       body: tableData,
+      theme: "striped",
+      headStyles: {
+        fillColor: [34, 197, 94], // green
+        textColor: 255,
+        fontStyle: "bold",
+        halign: "center",
+      },
+      styles: { fontSize: 10, valign: "middle" },
+      columnStyles: {
+        0: { halign: "center", cellWidth: 40 },
+        1: { cellWidth: 200 },
+        2: { halign: "center", cellWidth: 60 },
+        3: { halign: "right", cellWidth: 80 },
+        4: { halign: "right", cellWidth: 80 },
+      },
     });
 
-    // Grand Total
-    let finalY = doc.lastAutoTable?.finalY || 90;
-    doc.text(`Grand Total: ₹${order.grandTotal}`, 14, finalY + 10);
+    // TOTALS BOX
+    let finalY = doc.lastAutoTable.finalY + 20;
+    const subtotal = order.items.reduce((acc, item) => acc + item.itemAmt, 0);
+    const tax = subtotal * 0.18;
+    const total = subtotal + tax;
 
-    doc.save(`PurchaseOrder_${order.saleNo}.pdf`);
+    doc.setFillColor(245, 245, 245);
+    doc.rect(pageWidth - 250, finalY, 200, 80, "F");
+
+    doc.setFontSize(11);
+    doc.setTextColor(0, 0, 0);
+    doc.text(`Subtotal: ₹${subtotal.toFixed(2)}`, pageWidth - 240, finalY + 20);
+    doc.text(`Tax (18%): ₹${tax.toFixed(2)}`, pageWidth - 240, finalY + 40);
+    doc.setFont("helvetica", "bold");
+    doc.text(`Total: ₹${total.toFixed(2)}`, pageWidth - 240, finalY + 65);
+
+    // FOOTER
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text("Thank you for your business!", pageWidth / 2, finalY + 120, {
+      align: "center",
+    });
+    doc.text("Payment is due within 10 days.", pageWidth / 2, finalY + 135, {
+      align: "center",
+    });
+
+    // SAVE
+    doc.save(`Invoice_${order.saleNo}.pdf`);
   };
 
   const reactToPrintFn = useReactToPrint({ contentRef });
@@ -181,10 +240,10 @@ export default function SalesInvoice() {
             <thead>
               <tr className="bg-gray-100 text-black">
                 <th className="border p-2">#</th>
-                <th className="border p-2">Item Name</th>
-                <th className="border p-2">Qty</th>
-                <th className="border p-2">Rate</th>
-                <th className="border p-2">Amount</th>
+                <th className="border p-2 text-left">Item Name</th>
+                <th className="border p-2 text-left">Qty</th>
+                <th className="border p-2 text-left">Rate</th>
+                <th className="border p-2 text-left">Amount</th>
               </tr>
             </thead>
             <tbody>
@@ -201,8 +260,8 @@ export default function SalesInvoice() {
           </table>
 
           {/* Totals */}
-          <div className="flex justify-end mb-6 mt-4">
-            <div className="w-1/3">
+          <div className="flex justify-end mb-6 mt-4 p-6">
+            <div className="w-1/3 mr-6">
               <div className="flex justify-between py-2 border-b">
                 <span className="text-gray-600">Subtotal:</span>
                 <span className="font-medium">₹{subtotal.toFixed(2)}</span>
@@ -233,16 +292,16 @@ export default function SalesInvoice() {
         >
           <PrinterCheck /> Print PDF
         </button>
-
-        {/* <button
+        <button
           onClick={downloadPDF}
           className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg transition"
         >
           <Download />
           Download PDF
-        </button> */}
+        </button>
+
         <Link
-          to="/purchase/purchase-order"
+          to="/sales/sales-list"
           className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg transition"
         >
           <ChevronLeftCircle />

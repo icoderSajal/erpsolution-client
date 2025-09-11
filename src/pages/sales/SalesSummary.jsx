@@ -5,10 +5,10 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { ChevronLeftCircle } from "lucide-react";
 
 import api from "../../api/axios";
-import { useAuth } from "../../contexts/AuthContext";
+//import { useAuth } from "../../contexts/AuthContext";
 export default function SalesSummary() {
   const [routes, setRoutes] = useState([]);
-  const { user, userPermissions } = useAuth();
+  //const { user, userPermissions } = useAuth();
 
   const navigate = useNavigate();
   const fetchData = async () => {

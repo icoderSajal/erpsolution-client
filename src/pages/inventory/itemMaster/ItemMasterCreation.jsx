@@ -27,22 +27,12 @@ export default function ItemMasterCreation() {
 
   const fetchCategories = async () => {
     try {
-<<<<<<< HEAD
       const response = await api.get("/inventory/get-allcategories", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-=======
-      const response = await api.get(
-        "/inventory/get-allcategories",
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
->>>>>>> f5a6390ce5bb12c7ed326e0d1708a12f461a556f
+
       if (response.data.success) {
         setCategories(response.data.categories);
       }
@@ -75,22 +65,12 @@ export default function ItemMasterCreation() {
   // Fetch units
   const fetchUnits = async () => {
     try {
-<<<<<<< HEAD
       const response = await api.get("/inventory/get-allunits", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-=======
-      const response = await api.get(
-        "/inventory/get-allunits",
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
->>>>>>> f5a6390ce5bb12c7ed326e0d1708a12f461a556f
+
       if (response.data.success) {
         setUnits(response.data.units);
       }
@@ -151,19 +131,10 @@ export default function ItemMasterCreation() {
     if (!validate()) return;
 
     try {
-<<<<<<< HEAD
       const res = await api.post("/inventory/create-item", formData, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
-=======
-      const res = await api.post(
-        "/inventory/create-item",
-        formData,
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
-      );
->>>>>>> f5a6390ce5bb12c7ed326e0d1708a12f461a556f
+
       if (res.data.success) {
         toast.success("Item saved successfully");
         navigate("/inventory/itemmaster-list");
